@@ -1,25 +1,72 @@
 import express from "express";
+import { connectToDB } from "./config/db.config.js";
+import { IngredientModel } from "./models/ingredient.model.js";
+
+connectToDB();
 
 const app = express();
 
 app.use(express.json());
 
-const data = [];
+app.post("/", async (req, res) => {
+  try {
+    const createdIngredient = await IngredientModel.create(req.body);
 
-// CREATE
-
-app.post("/create", (req, res) => {
-  data.push(req.body);
-
-  console.log(data);
-
-  return res.status(201).json(data[data.length - 1]);
+    return res.status(201).json(createdIngredient);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json(e);
+  }
 });
 
-// READ ALL
+app.get("/", async (req, res) => {
+  try {
+    const allIngredients = await IngredientModel.find();
 
-app.get("/all", (req, res) => {
-  return res.status(200).json(data);
+    return res.status(200).json(allIngredients);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json(e);
+  }
+});
+
+app.get("/ingredient/:id", async (req, res) => {
+  try {
+    const ingredient = await IngredientModel.findOne({ _id: req.params.id });
+
+    return res.status(200).json(ingredient);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json(e);
+  }
+});
+
+app.delete("/:id", async (req, res) => {
+  try {
+    const deletedIngredient = await IngredientModel.deleteOne({
+      _id: req.params.id,
+    });
+
+    return res.status(200).json(deletedIngredient);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json(e);
+  }
+});
+
+app.put("/:id", async (req, res) => {
+  try {
+    const updatedItem = await IngredientModel.findOneAndUpdate(
+      { _id: req.params.id },
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedItem);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).json(e);
+  }
 });
 
 app.listen(4000, () => {
