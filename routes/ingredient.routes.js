@@ -36,6 +36,8 @@ ingredientRouter.get("/:id", async (req, res) => {
   }
 });
 
+// AO DELETAR UM INGREDIENT VC TEM QUE REMOVER ELE DE TODOS AS MEALS QUE ELE FAZ PARTE
+
 ingredientRouter.delete("/:id", async (req, res) => {
   try {
     const deletedIngredient = await IngredientModel.deleteOne({
