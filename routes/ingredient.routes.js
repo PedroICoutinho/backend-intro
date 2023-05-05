@@ -25,7 +25,7 @@ ingredientRouter.get("/", async (req, res) => {
   }
 });
 
-ingredientRouter.get("/ingredient/:id", async (req, res) => {
+ingredientRouter.get("/:id", async (req, res) => {
   try {
     const ingredient = await IngredientModel.findOne({ _id: req.params.id });
 
