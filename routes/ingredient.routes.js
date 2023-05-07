@@ -1,5 +1,7 @@
 import express from "express";
 import { IngredientModel } from "../models/ingredient.model.js";
+import { MealModel } from "../models/meal.model.js"
+
 
 const ingredientRouter = express.Router();
 
@@ -42,6 +44,16 @@ ingredientRouter.delete("/:id", async (req, res) => {
   try {
     const deletedIngredient = await IngredientModel.deleteOne({
       _id: req.params.id,
+    });
+
+    const meal = await MealModel;
+
+    meal.ingredients.forEach(async (currentIngredient) => {
+      await MealModel.findOneAndUpdate(
+        { _id: currentIngredient },
+        { $pull: { ingredients: deletedIngredient._id } },
+        { runValidators: true }
+      );
     });
 
     return res.status(200).json(deletedIngredient);
